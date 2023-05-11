@@ -1,5 +1,5 @@
 clc; clear
-load('data/test_model3.mat')
+load('data/test_model1.mat')
 
 %%
 params = cell2mat(cellfun(@(x) [x.s double(x.a) double(x.b) double(x.o)]',trial_params,'UniformOutput',false))';

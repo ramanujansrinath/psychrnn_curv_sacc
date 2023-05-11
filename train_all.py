@@ -7,7 +7,7 @@ def train_model(model_id):
   model_name = 'model' + str(model_id)
   N_trainbatch = 200 # number of trials per training update
 
-  task = RamTask_v0(N_batch = N_trainbatch)
+  task = curvature_saccade_task(N_batch = N_trainbatch)
 
   network_params = task.get_task_params()
   network_params['name'] = model_name
