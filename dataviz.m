@@ -1,5 +1,5 @@
 clc; clear
-load('data/test_model1.mat')
+load('/Volumes/colada/Ram/psychrnn_test/try3/data/test_model1.mat')
 
 %%
 params = cell2mat(cellfun(@(x) [x.s double(x.a) double(x.b) double(x.o)]',trial_params,'UniformOutput',false))';
@@ -50,7 +50,7 @@ for ii=1:50
 end
 
 %%
-nComp = 10;
+nComp = 4; dimIDs = 2:4;
 traj = reshape(pca(reshape(state_vars,[1000*180 50])','NumComponents',nComp),[1000 180 nComp]);
 curv = cellfun(@(x) x.s,trial_params);
 targ = cellfun(@(x) x.o,trial_params);
@@ -67,7 +67,7 @@ for ii=1:size(arc_conds,1)
     targ_ii = [trials.o];
     sel_ii = outputs(params(:,2)==arc_conds(ii,1) & params(:,3)==arc_conds(ii,2),end);
     
-    traj_ii = traj_ii(:,:,[1 2 4]);
+    traj_ii = traj_ii(:,:,dimIDs);
 
     % plot all trials
     subplot(321); hold on;
@@ -123,7 +123,7 @@ for ii=1:size(arc_conds,1)
 
     subplot(3,4,11); hold on;
     traj_ii = traj(params(:,2)==arc_conds(ii,1) & params(:,3)==arc_conds(ii,2),:,:);
-    resp = squeeze(traj_ii(:,end,2:4));
+    resp = squeeze(traj_ii(:,end,dimIDs));
 %     resp = squeeze(traj_ii(:,end,:));
     pred = decodeFn(targ_ii',resp);
     plot(targ_ii,pred,'.','color',cols(ii,:)) 
