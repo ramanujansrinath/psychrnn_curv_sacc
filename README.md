@@ -1,1 +1,2 @@
-# psychrnn_curv_sacc
+# Continuous curvature estimation RNN task
+Use PsychRNN to build, train, and test the curvature estimation task to visualize the dynamics of stimulus representation and rotation of representations to a saccade axis. Training and testing in python. Data visualization in Matlab.
