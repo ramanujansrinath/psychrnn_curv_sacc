@@ -51,8 +51,11 @@ def train_model(model_id):
 def test_model(model_id):
   model_name = 'model' + str(model_id)
   N_testbatch = 120 # number of trials to test
+  # task = curvature_saccade_task(N_batch = N_testbatch)
   task = uniform_curvature_task(N_batch = N_testbatch)
   network_params = task.get_task_params()  
+  network_params['N_rec'] = 50 # number of hidden units
+  network_params['rec_noise'] = 0.01 # recurrent noise
   test_inputs, target_outputs, mask, trial_params = task.get_trial_batch()
   simulator = BasicSimulator(weights_path='weights/' + model_name + '.npz', params=network_params)
 
