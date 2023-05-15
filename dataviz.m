@@ -3,51 +3,51 @@ load('/Volumes/colada/Ram/psychrnn_test/try3/data/test_model1.mat')
 
 %%
 params = cell2mat(cellfun(@(x) [x.s double(x.a) double(x.b) double(x.o)]',trial_params,'UniformOutput',false))';
-
 arc_conds = unique(params(:,2:3),'rows');
+cols = [copper(4) winter(4)]; cols(1,:) = []; cols = reshape(cols',3,6)';
 clf;
 for ii=1:size(arc_conds,1)
     subplot(121); hold on;
     plot(...
         params(params(:,2)==arc_conds(ii,1) & params(:,3)==arc_conds(ii,2),1),...
         params(params(:,2)==arc_conds(ii,1) & params(:,3)==arc_conds(ii,2),4),...
-        '.');
+        '.','color',cols(ii,:));
     subplot(122); hold on;
     correct_sacc = cellfun(@(x) x.o,trial_params);
     actual_sacc = outputs(:,end);
     plot(correct_sacc(params(:,2)==arc_conds(ii,1) & params(:,3)==arc_conds(ii,2)),...
         actual_sacc(params(:,2)==arc_conds(ii,1) & params(:,3)==arc_conds(ii,2)),...
-        '.')
+        '.','color',cols(ii,:))
 end
 fixPlot(subplot(121),[-0.1 1.1],[-90 90],'curvature','saccade target',0:0.25:1,-90:45:90,'inference to expected behaviour')
 fixPlot(subplot(122),[-90 90],[-90 90],'saccade target','actual saccade',-90:45:90,-90:45:90,'behaviour')
 
 %%
-for ii=1:50
-    clf; subplot(121); hold on;
-    plot(test_inputs(ii,:,1))
-    plot(test_inputs(ii,:,2)/180)
-    plot(test_inputs(ii,:,3)/180)
-    plot(test_inputs(ii,:,4))
-    plot(target_outputs(ii,:,1)/180,'linewidth',2)
-%     plot(target_outputs(ii,:,2),'linewidth',2)
-    line([trial_params{ii}.fix_onset trial_params{ii}.fix_onset]/10,[0 1])
-    line([trial_params{ii}.s_onset trial_params{ii}.s_onset]/10,[0 1])
-    line([trial_params{ii}.ab_onset trial_params{ii}.ab_onset]/10,[0 1])
-    line([trial_params{ii}.fix_offset trial_params{ii}.fix_offset]/10,[0 1])
-
-
-    subplot(122); hold on;
-    plot(target_outputs(ii,:,1)/180,'linewidth',2)
-%     plot(target_outputs(ii,:,2),'linewidth',2)
-    plot(outputs(ii,:,1)/180,'linewidth',2)
-%     plot(outputs(ii,:,2),'linewidth',2)
-    line([trial_params{ii}.fix_onset trial_params{ii}.fix_onset]/10,[0 1])
-    line([trial_params{ii}.s_onset trial_params{ii}.s_onset]/10,[0 1])
-    line([trial_params{ii}.ab_onset trial_params{ii}.ab_onset]/10,[0 1])
-    line([trial_params{ii}.fix_offset trial_params{ii}.fix_offset]/10,[0 1])
-    pause;
-end
+% for ii=1:50
+%     clf; subplot(121); hold on;
+%     plot(test_inputs(ii,:,1))
+%     plot(test_inputs(ii,:,2)/180)
+%     plot(test_inputs(ii,:,3)/180)
+%     plot(test_inputs(ii,:,4))
+%     plot(target_outputs(ii,:,1)/180,'linewidth',2)
+% %     plot(target_outputs(ii,:,2),'linewidth',2)
+%     line([trial_params{ii}.fix_onset trial_params{ii}.fix_onset]/10,[0 1])
+%     line([trial_params{ii}.s_onset trial_params{ii}.s_onset]/10,[0 1])
+%     line([trial_params{ii}.ab_onset trial_params{ii}.ab_onset]/10,[0 1])
+%     line([trial_params{ii}.fix_offset trial_params{ii}.fix_offset]/10,[0 1])
+% 
+% 
+%     subplot(122); hold on;
+%     plot(target_outputs(ii,:,1)/180,'linewidth',2)
+% %     plot(target_outputs(ii,:,2),'linewidth',2)
+%     plot(outputs(ii,:,1)/180,'linewidth',2)
+% %     plot(outputs(ii,:,2),'linewidth',2)
+%     line([trial_params{ii}.fix_onset trial_params{ii}.fix_onset]/10,[0 1])
+%     line([trial_params{ii}.s_onset trial_params{ii}.s_onset]/10,[0 1])
+%     line([trial_params{ii}.ab_onset trial_params{ii}.ab_onset]/10,[0 1])
+%     line([trial_params{ii}.fix_offset trial_params{ii}.fix_offset]/10,[0 1])
+%     pause;
+% end
 
 %%
 nComp = 4; dimIDs = 2:4;
@@ -57,7 +57,6 @@ targ = cellfun(@(x) x.o,trial_params);
 binE = linspace(0,1,11);
 binC = (binE+circshift(binE,-1))/2; binC = binC(1:end-1);
 clf;
-cols = lines(size(arc_conds,1));
 for ii=1:size(arc_conds,1)
     trials = cell2mat(trial_params(params(:,2)==arc_conds(ii,1) & params(:,3)==arc_conds(ii,2)));
 
@@ -141,3 +140,28 @@ fixPlot(subplot(349),[-0.1 1.1],[-0.1 1.1],'curvature','decoded curvature',0:0.2
 fixPlot(subplot(3,4,10),[-90 90],[-90 90],'target','decoded target',-90:45:90,-90:45:90,'target linear decoding (full dim)')
 fixPlot(subplot(3,4,11),[-90 90],[-90 90],'target','decoded target',-90:45:90,-90:45:90,'target linear decoding (3 dim)')
 fixPlot(subplot(3,4,12),[-0.1 1.1],[-90 90],'curvature','decoded target',0:0.25:1,-90:45:90,'curvature and decoded target (3 dim)')
+
+
+function [xx_u,yy_m] = plotTrendPatchLine(h,xVar,yVar,col,xLims,nBin)
+    % [xx_u,~,grp] = unique(xVar);
+    [~,binE,grp] = histcounts(xVar,linspace(xLims(1),xLims(2),nBin+1));
+    grp(grp<1) = 1; grp(grp>nBin) = nBin;
+    xx_u = (binE+circshift(binE,-1))/2; xx_u = xx_u(1:end-1)';
+    yy_m = groupsummary(yVar,grp,'mean'); yy_m = smooth(yy_m);
+    yy_s = groupsummary(yVar,grp,'std')./sqrt(groupsummary(yVar,grp,'nnz'));
+
+    % fix for when there are empty bins
+    if length(yy_m)~=length(xx_u)
+        yy_m(unique(grp)) = yy_m; yy_m(~ismember(1:nBin,unique(grp))) = nan;
+        yy_s(unique(grp)) = yy_s; yy_s(~ismember(1:nBin,unique(grp))) = nan;
+    end
+
+    hold(h,'on')
+    patch([xx_u;flipud(xx_u)],[yy_m-yy_s/2; flipud(yy_m+yy_s/2)],col,'edgecolor','none','facealpha',0.5,'parent',h)
+
+    beta = regress(yy_m(:),[ones(length(xx_u),1) xx_u(:)]);
+    yFit = beta(1) + beta(2)*xLims;
+    line(xLims,yFit,'linestyle','--','color',col,'linewidth',2)
+
+    plot(h,xx_u,yy_m,'-','linewidth',2,'color',col); % 'MarkerFaceColor','w','markersize',10
+end
