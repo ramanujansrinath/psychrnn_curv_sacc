@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from psychrnn.tasks.task import Task
-import math
+import numpy as np
 
 class uniform_curvature_task(Task):
-    def __init__(self, dt=10, tau=20, T=1800, N_in=4, N_out=1, N_batch=100, in_noise=0.01, alpha=1):
+    def __init__(self, dt=10, tau=20, T=1800, N_in=4, N_out=1, N_batch=100, in_noise=0.0, alpha=1):
         # ----------------------------------
         # Define network parameters
         # ----------------------------------
@@ -37,7 +37,7 @@ class uniform_curvature_task(Task):
         else:
             params['b'] = 140
 
-        params['o'] = math.round(params['s']*params['b'] - params['b']/2 + params['a'])
+        params['o'] = round(params['s']*params['b'] - params['b']/2 + params['a'])
         
         params['fix_onset'] = 200
         params['s_onset'] = 400
@@ -67,7 +67,7 @@ class uniform_curvature_task(Task):
         # Initialize with input noise
         # ----------------------------------
 
-        x_t = np.sqrt(2 * self.alpha * self.in_noise**2) * rng.standard_normal(self.N_in)
+        x_t = np.zeros(self.N_in)
         y_t = np.zeros(self.N_out)
         mask_t = np.ones(self.N_out) # weighing all timepoints and outputs equally
         
